@@ -13,18 +13,31 @@ const App = () => {
     const [currentEditedItem,setCurrentEditedItem] = useState("");
 
     const handleAddTodo = () => {
+        // Check if title or description is empty
+        if (newTitle.trim() === '' || newDescription.trim() === '') {
+            alert('Please enter a title and description.');
+            return; // Exit the function if title or description is empty
+        }
+    
+        // Check if the todo already exists in the list
+        const isDuplicate = alltodos.some(todo => todo.title === newTitle && todo.description === newDescription);
+        if (isDuplicate) {
+            alert('Todo already exists.');
+            return; // Exit the function if todo already exists
+        }
+    
         let newTodoItem = {
             title: newTitle,
             description: newDescription,
         };
-
+    
         let updatedTodoArr = [...alltodos];
         updatedTodoArr.push(newTodoItem);
         setTodos(updatedTodoArr);
-        localStorage.setItem('todolist',JSON.stringify(updatedTodoArr));
-
+        localStorage.setItem('todolist', JSON.stringify(updatedTodoArr));
+    
         setNewTitle('');
-    setNewDescription('');
+        setNewDescription('');
     };
 
 
@@ -74,7 +87,7 @@ const App = () => {
         }
     }, []);
 
-    const handleEdit = (ind, item) => { // Pass item to handleEdit function
+    const handleEdit = (ind, item) => { 
             setCurrentEdit(ind);
             setCurrentEditedItem(item);
     }
@@ -82,22 +95,30 @@ const App = () => {
 
     const handleUpdateTitle = (value)=>{
             setCurrentEditedItem((prev)=>{
-                return{...prev, title: value} // Update title property
+                return{...prev, title: value} 
             })
     }
 
     const handleUpdateDescription = (value)=>{
         setCurrentEditedItem((prev)=>{
-            return{...prev, description: value} // Update description property
+            return{...prev, description: value} 
         })
     }
 
-    const handleUpdateTodo = ()=>{
+    const handleUpdateTodo = () => {
+       
+        const isDuplicate = alltodos.some((todo, index) => index !== currentEdit && todo.title === currentEditedItem.title && todo.description === currentEditedItem.description);
+        if (isDuplicate) {
+            alert('Todo already exists.');
+            return; 
+        }
+    
         let newTodo = [...alltodos];
-        newTodo[currentEdit] = currentEditedItem; // Update currentEditedItem
+        newTodo[currentEdit] = currentEditedItem;
         setTodos(newTodo);
         setCurrentEdit("");
-    }
+    };
+    
 
 
     return (
